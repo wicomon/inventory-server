@@ -12,6 +12,7 @@ import { join } from 'path';
 import { UserModule } from './user/user.module';
 import { CommonModule } from './common/common.module';
 import { CompanyModule } from './company/company.module';
+import { MenuModule } from './menu/menu.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { CompanyModule } from './company/company.module';
     UserModule,
     CommonModule,
     CompanyModule,
+    MenuModule,
   ],
   controllers: [AppController],
   providers: [AppService],
