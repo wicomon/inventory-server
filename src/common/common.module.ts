@@ -4,8 +4,8 @@ import { ConfigModule } from '@nestjs/config';
 
 @Global()
 @Module({
-  providers: [PrismaService],
   exports: [PrismaService],
+  providers: [PrismaService],
   imports: [ConfigModule],
 })
 export class CommonModule {}

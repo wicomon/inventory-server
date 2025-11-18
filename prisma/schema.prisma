@@ -7,3 +7,120 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+
+model Company {
+  id        String   @id @default(uuid())
+  name      String
+  ruc       String?  @unique // Para Perú (RUC), ajusta según tu país
+  address   String?
+  phone     String?
+  email     String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+  updatedBy String?
+
+  users        User[]
+  // roles        Role[]
+  companyMenus CompanyMenu[] // Menús habilitados para esta empresa
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String // Hash del password (bcrypt)
+  firstName String
+  lastName  String
+  isActive  Boolean  @default(true)
+  companyId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+  updatedBy String?
+
+  company   Company    @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  userRoles UserRole[]
+
+  @@index([companyId])
+}
+
+model Role {
+  id          String   @id @default(uuid())
+  name        String // Ej: "Administrador", "Vendedor", "Supervisor"
+  slug        String // Ej: "admin", "sales", "supervisor"
+  description String?
+  canRead     Boolean  @default(true)
+  canCreate   Boolean  @default(true)
+  canUpdate   Boolean  @default(true)
+  canDelete   Boolean  @default(true)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   String?
+  updatedBy   String?
+
+  // company         Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  userRoles UserRole[]
+  // rolePermissions RolePermission[]
+
+  @@unique([name]) // Un rol único por nombre dentro de cada empresa
+  @@unique([slug]) // Un rol único por nombre dentro de cada empresa
+}
+
+model UserRole {
+  id        String   @id @default(uuid())
+  userId    String
+  roleId    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId])
+  @@index([userId])
+  @@index([roleId])
+}
+
+model Menu {
+  id          String   @id @default(uuid())
+  code        String   @unique // Código único interno: "sales", "inventory", "reports"
+  name        String // Nombre por defecto: "Ventas", "Inventario", "Reportes"
+  description String?
+  path        String   @unique // Ruta en el frontend: "/ventas", "/inventario"
+  icon        String? // Nombre del ícono (ej: "shopping-cart", "package")
+  order       Int      @default(0) // Orden por defecto
+  parentId    String? // Para menús anidados (submenús)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   String?
+  updatedBy   String?
+
+  parent       Menu?         @relation("MenuHierarchy", fields: [parentId], references: [id])
+  subMenu      Menu[]        @relation("MenuHierarchy")
+  companyMenus CompanyMenu[] // Empresas que tienen este menú habilitado
+  // rolePermissions RolePermission[]
+
+  // @@index([parentId])
+}
+
+model CompanyMenu {
+  id          String   @id @default(uuid())
+  companyId   String
+  menuId      String
+  isEnabled   Boolean  @default(true) // Permite deshabilitar sin eliminar
+  customName  String? // Nombre personalizado: "Punto de Venta" en vez de "Ventas"
+  customIcon  String? // Ícono personalizado
+  customOrder Int? // Orden personalizado para esta empresa
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  menu    Menu    @relation(fields: [menuId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, menuId])
+  @@index([companyId])
+  @@index([menuId])
+}
