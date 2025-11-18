@@ -13,6 +13,7 @@ import { UserModule } from './user/user.module';
 import { CommonModule } from './common/common.module';
 import { CompanyModule } from './company/company.module';
 import { MenuModule } from './menu/menu.module';
+import { RoleModule } from './role/role.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { MenuModule } from './menu/menu.module';
     CommonModule,
     CompanyModule,
     MenuModule,
+    RoleModule,
   ],
   controllers: [AppController],
   providers: [AppService],

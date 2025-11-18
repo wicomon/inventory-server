@@ -32,11 +32,17 @@ type Menu {
   exampleField: Int!
 }
 
+type Role {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
 type Query {
   userFindAll: [User!]!
   findUserById(id: String!): User!
   company(id: Int!): Company!
   menu(id: Int!): Menu!
+  role(id: Int!): Role!
 }
 
 type Mutation {
@@ -49,6 +55,9 @@ type Mutation {
   createMenu(createMenuInput: CreateMenuInput!): Menu!
   updateMenu(updateMenuInput: UpdateMenuInput!): Menu!
   removeMenu(id: Int!): Menu!
+  createRole(createRoleInput: CreateRoleInput!): Role!
+  updateRole(updateRoleInput: UpdateRoleInput!): Role!
+  removeRole(id: Int!): Role!
 }
 
 input CreateUserInput {
@@ -79,6 +88,17 @@ input CreateMenuInput {
 }
 
 input UpdateMenuInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateRoleInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateRoleInput {
   """Example field (placeholder)"""
   exampleField: Int
   id: Int!
