@@ -11,6 +11,7 @@ import { ConfigModule } from '@nestjs/config';
 import { join } from 'path';
 import { UserModule } from './user/user.module';
 import { CommonModule } from './common/common.module';
+import { CompanyModule } from './company/company.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { CommonModule } from './common/common.module';
     }),
     UserModule,
     CommonModule,
+    CompanyModule,
   ],
   controllers: [AppController],
   providers: [AppService],
