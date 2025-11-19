@@ -8,7 +8,6 @@ export class UserService {
   constructor(private readonly prismaService: PrismaService) {}
 
   findAll() {
-    console.log({source: 'user find all'})
     const users = this.prismaService.user.findMany({});
     return users;
   }
