@@ -13,7 +13,10 @@ export class UserService {
   }
 
   findOne(id: string) {
-    return `This action returns a #${id} user`;
+    const user = this.prismaService.user.findUnique({
+      where: { id },
+    });
+    return user;
   }
 
   create(createUserInput: CreateUserInput) {
