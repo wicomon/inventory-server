@@ -8,30 +8,42 @@ import { CreateRoleInput } from './dto/create-role.input';
 import { UpdateRoleInput } from './dto/update-role.input';
 import { PrismaService } from 'src/common/services/prisma.service';
 import { PrismaSelect } from 'src/common/types';
+import { CommonService } from 'src/common/services/common.service';
 
 @Injectable()
 export class RoleService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly commonService: CommonService,
+  ) {}
 
   async findAll(select: PrismaSelect) {
-    const roles = await this.prisma.role.findMany({
-      where: {
-        isActive: true,
-      },
-      select,
-    });
-    return roles;
+    try {
+      const roles = await this.prisma.role.findMany({
+        where: {
+          isActive: true,
+        },
+        select,
+      });
+      return roles;
+    } catch (error) {
+      this.commonService.handleErrors(error);
+    }
   }
 
   async findOne(id: string, select: PrismaSelect) {
-    const role = await this.prisma.role.findUnique({
-      where: { id },
-      select,
-    });
-    if (!role) {
-      throw new NotFoundException('El rol que intenta consultar no existe');
+    try {
+      const role = await this.prisma.role.findUnique({
+        where: { id },
+        select,
+      });
+      if (!role) {
+        throw new NotFoundException('El rol que intenta consultar no existe');
+      }
+      return role;
+    } catch (error) {
+      this.commonService.handleErrors(error);
     }
-    return role;
   }
 
   async create(createRoleInput: CreateRoleInput) {
@@ -52,7 +64,7 @@ export class RoleService {
 
       return true;
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      this.commonService.handleErrors(error);
     }
   }
 
@@ -73,7 +85,7 @@ export class RoleService {
 
       return true;
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      this.commonService.handleErrors(error);
     }
   }
 
@@ -94,7 +106,7 @@ export class RoleService {
 
       return true;
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      this.commonService.handleErrors(error);
     }
   }
 }
