@@ -3,14 +3,18 @@ import {
   HttpException,
   Injectable,
   InternalServerErrorException,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { Prisma } from 'generated/prisma/client';
 
 @Injectable()
 export class CommonService {
+  private readonly logger = new Logger(CommonService.name);
   handleErrors(error: any) {
-    console.log(error);
+    // use logger instead of consolelog
+    // console.log(error);
+    this.logger.error(error);
     if (error instanceof HttpException) {
       throw error;
     }
