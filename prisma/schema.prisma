@@ -5,14 +5,14 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  // url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
-
 
 model Company {
   id        String   @id @default(uuid())
-  name      String
-  ruc       String?  @unique // Para Perú (RUC), ajusta según tu país
+  name      String   @unique
+  ruc       String?
+  website   String?
   address   String?
   phone     String?
   email     String?

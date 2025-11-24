@@ -8,28 +8,35 @@ import { UpdateCompanyInput } from './dto/update-company.input';
 export class CompanyResolver {
   constructor(private readonly companyService: CompanyService) {}
 
-  @Mutation(() => Company)
-  createCompany(@Args('createCompanyInput') createCompanyInput: CreateCompanyInput) {
-    return this.companyService.create(createCompanyInput);
-  }
-
-  @Query(() => [Company], { name: 'company' })
+  @Query(() => [Company], { name: 'companyFindAll' })
   findAll() {
     return this.companyService.findAll();
   }
 
-  @Query(() => Company, { name: 'company' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  @Query(() => Company, { name: 'companyFindOne' })
+  findOne(@Args('id', { type: () => String }) id: string) {
     return this.companyService.findOne(id);
   }
 
-  @Mutation(() => Company)
-  updateCompany(@Args('updateCompanyInput') updateCompanyInput: UpdateCompanyInput) {
-    return this.companyService.update(updateCompanyInput.id, updateCompanyInput);
+  @Mutation(() => Company, { name: 'companyCreate' })
+  createCompany(
+    @Args('createCompanyInput') createCompanyInput: CreateCompanyInput,
+  ) {
+    return this.companyService.create(createCompanyInput);
   }
 
-  @Mutation(() => Company)
-  removeCompany(@Args('id', { type: () => Int }) id: number) {
+  @Mutation(() => Company, { name: 'companyUpdate' })
+  updateCompany(
+    @Args('updateCompanyInput') updateCompanyInput: UpdateCompanyInput,
+  ) {
+    return this.companyService.update(
+      updateCompanyInput.id,
+      updateCompanyInput,
+    );
+  }
+
+  @Mutation(() => Company, { name: 'companyRemove' })
+  removeCompany(@Args('id', { type: () => String }) id: string) {
     return this.companyService.remove(id);
   }
 }

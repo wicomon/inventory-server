@@ -23,8 +23,18 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 type Company {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  id: String!
+  name: String!
+  address: String
+  phone: String
+  email: String
+  ruc: String
+  website: String
+  isActive: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  createdBy: String
+  updatedBy: String
 }
 
 type Menu {
@@ -40,7 +50,8 @@ type Role {
 type Query {
   userFindAll: [User!]!
   findUserById(id: String!): User!
-  company(id: Int!): Company!
+  companyFindAll: [Company!]!
+  companyFindOne(id: String!): Company!
   menu(id: Int!): Menu!
   role(id: Int!): Role!
 }
@@ -49,9 +60,9 @@ type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
   updateUser(updateUserInput: UpdateUserInput!): User!
   removeUser(id: String!): User!
-  createCompany(createCompanyInput: CreateCompanyInput!): Company!
-  updateCompany(updateCompanyInput: UpdateCompanyInput!): Company!
-  removeCompany(id: Int!): Company!
+  companyCreate(createCompanyInput: CreateCompanyInput!): Company!
+  companyUpdate(updateCompanyInput: UpdateCompanyInput!): Company!
+  companyRemove(id: String!): Company!
   createMenu(createMenuInput: CreateMenuInput!): Menu!
   updateMenu(updateMenuInput: UpdateMenuInput!): Menu!
   removeMenu(id: Int!): Menu!
@@ -72,14 +83,22 @@ input UpdateUserInput {
 }
 
 input CreateCompanyInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  name: String!
+  address: String
+  phone: String
+  email: String
+  ruc: String
+  website: String
 }
 
 input UpdateCompanyInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+  name: String
+  address: String
+  phone: String
+  email: String
+  ruc: String
+  website: String
+  id: String!
 }
 
 input CreateMenuInput {
