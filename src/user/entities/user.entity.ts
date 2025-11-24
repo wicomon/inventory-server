@@ -2,7 +2,7 @@ import { ObjectType, Field, Int } from '@nestjs/graphql';
 
 @ObjectType()
 export class User {
-  @Field(() => String, { description: 'Example field (placeholder)' })
+  @Field(() => String)
   id: string;
 
   @Field(() => String)
@@ -29,9 +29,9 @@ export class User {
   @Field(() => Date)
   updatedAt: Date;
 
-  @Field(() => String)
-  createdBy: string;
+  @Field(() => String, { nullable: true })
+  createdBy?: string;
 
-  @Field(() => String)
-  updatedBy: string;
+  @Field(() => String, { nullable: true })
+  updatedBy?: string;
 }

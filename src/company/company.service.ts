@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -8,29 +9,41 @@ import { CreateCompanyInput } from './dto/create-company.input';
 import { UpdateCompanyInput } from './dto/update-company.input';
 import { PrismaService } from 'src/common/services/prisma.service';
 import { PrismaSelect } from 'src/common/types';
+import { CommonService } from 'src/common/services/common.service';
 
 @Injectable()
 export class CompanyService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly commonService: CommonService,
+  ) {}
 
   async findAll(select: PrismaSelect) {
-    return this.prisma.company.findMany({
-      where: {
-        isActive: true,
-      },
-      select,
-    });
+    try {
+      return this.prisma.company.findMany({
+        where: {
+          isActive: true,
+        },
+        select,
+      });
+    } catch (error) {
+      this.commonService.handleErrors(error);
+    }
   }
 
   async findOne(id: string, select: PrismaSelect) {
-    const user = await this.prisma.company.findUnique({
-      where: { id },
-      select
-    });
-    if (!user) {
-      throw new NotFoundException('La empresa que intenta consultar no existe');
+    try {
+      const user = await this.prisma.company.findUnique({
+        where: { id },
+        select
+      });
+      if (!user) {
+        throw new NotFoundException('La empresa que intenta consultar no existe');
+      }
+      return user;
+    } catch (error) {
+      this.commonService.handleErrors(error);
     }
-    return user;
   }
 
   async create(createCompanyInput: CreateCompanyInput) {
@@ -42,7 +55,7 @@ export class CompanyService {
       });
 
       if (existsCompany) {
-        throw new BadRequestException('Ya existe una empresa con ese nombre');
+        throw new ConflictException('Ya existe una empresa con ese nombre');
       }
 
       const newCompany = await this.prisma.company.create({
@@ -50,7 +63,7 @@ export class CompanyService {
       });
       return true;
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      this.commonService.handleErrors(error);
     }
   }
 
@@ -74,7 +87,7 @@ export class CompanyService {
 
       return true;
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      this.commonService.handleErrors(error);
     }
   }
 
@@ -99,7 +112,7 @@ export class CompanyService {
 
       return true;
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      this.commonService.handleErrors(error);
     }
   }
 }

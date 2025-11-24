@@ -3,7 +3,6 @@
 # ------------------------------------------------------
 
 type User {
-  """Example field (placeholder)"""
   id: String!
   email: String!
   password: String!
@@ -13,8 +12,8 @@ type User {
   companyId: String!
   createdAt: DateTime!
   updatedAt: DateTime!
-  createdBy: String!
-  updatedBy: String!
+  createdBy: String
+  updatedBy: String
 }
 
 """
@@ -60,7 +59,7 @@ type Role {
 
 type Query {
   userFindAll: [User!]!
-  findUserById(id: String!): User!
+  userById(id: String!): User!
   companyFindAll: [Company!]!
   companyFindOne(id: String!): Company!
   menu(id: Int!): Menu!
@@ -69,9 +68,9 @@ type Query {
 }
 
 type Mutation {
-  createUser(createUserInput: CreateUserInput!): User!
-  updateUser(updateUserInput: UpdateUserInput!): User!
-  removeUser(id: String!): User!
+  userCreate(createUserInput: CreateUserInput!): Boolean!
+  userUpdate(updateUserInput: UpdateUserInput!): Boolean!
+  userRemove(id: String!): Boolean!
   companyCreate(createCompanyInput: CreateCompanyInput!): Boolean!
   companyUpdate(updateCompanyInput: UpdateCompanyInput!): Boolean!
   companyRemove(id: String!): Boolean!
@@ -84,14 +83,22 @@ type Mutation {
 }
 
 input CreateUserInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  email: String!
+  password: String!
+  firstName: String!
+  lastName: String!
+  companyId: String!
+  roles: [String!]!
 }
 
 input UpdateUserInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+  email: String
+  password: String
+  firstName: String
+  lastName: String
+  companyId: String
+  roles: [String!]
+  id: String!
 }
 
 input CreateCompanyInput {

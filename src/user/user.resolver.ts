@@ -13,22 +13,22 @@ export class UserResolver {
     return this.userService.findAll();
   }
 
-  @Query(() => User, { name: 'findUserById' })
+  @Query(() => User, { name: 'userById' })
   findOne(@Args('id', { type: () => String }) id: string) {
     return this.userService.findOne(id);
   }
 
-  @Mutation(() => User, { name: 'createUser' })
+  @Mutation(() => Boolean, { name: 'userCreate' })
   createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
     return this.userService.create(createUserInput);
   }
 
-  @Mutation(() => User, { name: 'updateUser' })
+  @Mutation(() => Boolean, { name: 'userUpdate' })
   updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
     return this.userService.update(updateUserInput.id, updateUserInput);
   }
 
-  @Mutation(() => User, { name: 'removeUser' })
+  @Mutation(() => Boolean, { name: 'userRemove' })
   removeUser(@Args('id', { type: () => String }) id: string) {
     return this.userService.remove(id);
   }

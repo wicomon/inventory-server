@@ -14,6 +14,7 @@ import { CommonModule } from './common/common.module';
 import { CompanyModule } from './company/company.module';
 import { MenuModule } from './menu/menu.module';
 import { RoleModule } from './role/role.module';
+import { GraphQLError, GraphQLFormattedError } from 'graphql';
 
 @Module({
   imports: [
@@ -31,6 +32,22 @@ import { RoleModule } from './role/role.module';
           ? ApolloServerPluginLandingPageLocalDefault()
           : ApolloServerPluginLandingPageProductionDefault(),
       ],
+      formatError: (error: GraphQLError) => {
+        const originalError = error.extensions?.originalError as any;
+        
+        if (originalError?.statusCode) {
+          const formattedError: GraphQLFormattedError = {
+            message: error.message,
+            extensions: {
+              code: originalError.error?.toUpperCase() || 'BAD_REQUEST',
+              statusCode: originalError.statusCode,
+            },
+          };
+          return formattedError;
+        }
+        
+        return error;
+      },
       // formatError: (err) => ({
       //   message: err.message,
       //   // status: err.extensions.code,
