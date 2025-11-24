@@ -8,6 +8,10 @@ export class CreateCompanyInput {
   @IsString()
   name: string;
 
+  @Field(() => String)
+  @IsString()
+  slug: string;
+
   @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()

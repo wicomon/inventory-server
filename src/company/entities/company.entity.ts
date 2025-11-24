@@ -9,6 +9,9 @@ export class Company {
   name: string;
 
   @Field(() => String, { nullable: true })
+  slug?: string;
+
+  @Field(() => String, { nullable: true })
   address?: string;
 
   @Field(() => String, { nullable: true })

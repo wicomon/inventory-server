@@ -34,30 +34,12 @@ export class UserService {
     try {
       const user = await this.prismaService.user.findUnique({
         where: { id },
-        // select
-        select: {
-          id: true,
-          email: true,
-          firstName: true,
-          lastName: true,
-          companyId: true,
-          role: {
-            select: {
-              id: true,
-              name: true,
-              description: true,
-              canCreate: true,
-              canRead: true,
-              canUpdate: true,
-              canDelete: true,
-            }
-          }
-        }
+        select
       });
       if(!user){
         throw new NotFoundException('Usuario no encontrado');
       }
-      console.log(user)
+      // console.log(user)
       return user;
     } catch (error) {
       this.commonService.handleErrors(error);

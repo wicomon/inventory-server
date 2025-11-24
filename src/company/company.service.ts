@@ -50,12 +50,12 @@ export class CompanyService {
     try {
       const existsCompany = await this.prisma.company.findFirst({
         where: {
-          name: createCompanyInput.name,
+          slug: createCompanyInput.slug,
         },
       });
 
       if (existsCompany) {
-        throw new ConflictException('Ya existe una empresa con ese nombre');
+        throw new ConflictException('Ya existe una empresa con ese slug');
       }
 
       const newCompany = await this.prisma.company.create({

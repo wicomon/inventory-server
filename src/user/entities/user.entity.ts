@@ -1,4 +1,6 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { Company } from 'src/company/entities/company.entity';
+import { Role } from 'src/role/entities/role.entity';
 
 @ObjectType()
 export class User {
@@ -37,4 +39,10 @@ export class User {
 
   @Field(() => String, { nullable: true })
   updatedBy?: string;
+
+  @Field(() => Role)
+  role: Role;
+
+  @Field(() => Company)
+  company: Company;
 }
