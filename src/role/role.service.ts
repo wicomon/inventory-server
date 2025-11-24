@@ -1,26 +1,93 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateRoleInput } from './dto/create-role.input';
 import { UpdateRoleInput } from './dto/update-role.input';
+import { PrismaService } from 'src/common/services/prisma.service';
 
 @Injectable()
 export class RoleService {
-  create(createRoleInput: CreateRoleInput) {
-    return 'This action adds a new role';
+  constructor(private readonly prisma: PrismaService) {}
+
+  async findAll() {
+    const roles = await this.prisma.role.findMany();
+    return roles;
   }
 
-  findAll() {
-    return `This action returns all role`;
+  async findOne(id: string) {
+    const role = await this.prisma.role.findUnique({
+      where: { id },
+    });
+    if (!role) {
+      throw new NotFoundException('El rol que intenta consultar no existe');
+    }
+    return role;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} role`;
+  async create(createRoleInput: CreateRoleInput) {
+    try {
+      const existsRole = await this.prisma.role.findFirst({
+        where: {
+          name: createRoleInput.name,
+        },
+      });
+
+      if (existsRole) {
+        throw new ConflictException('Ya existe un rol con ese nombre');
+      }
+
+      const newRole = await this.prisma.role.create({
+        data: createRoleInput,
+      });
+
+      return newRole;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
-  update(id: number, updateRoleInput: UpdateRoleInput) {
-    return `This action updates a #${id} role`;
+  async update(id: string, updateRoleInput: UpdateRoleInput) {
+    try {
+      const existsRole = await this.prisma.role.findUnique({
+        where: { id },
+      });
+
+      if (!existsRole) {
+        throw new NotFoundException('El rol que intenta actualizar no existe');
+      }
+
+      const updatedRole = await this.prisma.role.update({
+        where: { id },
+        data: updateRoleInput,
+      });
+
+      return updatedRole;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} role`;
+  async remove(id: string) {
+    try {
+      const existsRole = await this.prisma.role.findUnique({
+        where: { id },
+      });
+
+      if (!existsRole) {
+        throw new NotFoundException('El rol que intenta eliminar no existe');
+      }
+
+      const deletedRole = await this.prisma.role.update({
+        where: { id },
+        data: { isActive: false },
+      });
+
+      return deletedRole;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 }

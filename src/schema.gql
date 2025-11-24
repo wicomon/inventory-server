@@ -43,8 +43,19 @@ type Menu {
 }
 
 type Role {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  id: String!
+  name: String!
+  slug: String!
+  description: String
+  canRead: Boolean!
+  canCreate: Boolean!
+  canUpdate: Boolean!
+  canDelete: Boolean!
+  isActive: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  createdBy: String
+  updatedBy: String
 }
 
 type Query {
@@ -53,7 +64,8 @@ type Query {
   companyFindAll: [Company!]!
   companyFindOne(id: String!): Company!
   menu(id: Int!): Menu!
-  role(id: Int!): Role!
+  roleFindAll: [Role!]!
+  roleFindOne(id: String!): Role!
 }
 
 type Mutation {
@@ -66,9 +78,9 @@ type Mutation {
   createMenu(createMenuInput: CreateMenuInput!): Menu!
   updateMenu(updateMenuInput: UpdateMenuInput!): Menu!
   removeMenu(id: Int!): Menu!
-  createRole(createRoleInput: CreateRoleInput!): Role!
-  updateRole(updateRoleInput: UpdateRoleInput!): Role!
-  removeRole(id: Int!): Role!
+  roleCreate(createRoleInput: CreateRoleInput!): Role!
+  roleUpdate(updateRoleInput: UpdateRoleInput!): Role!
+  roleRemove(id: String!): Role!
 }
 
 input CreateUserInput {
@@ -113,12 +125,22 @@ input UpdateMenuInput {
 }
 
 input CreateRoleInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  name: String!
+  slug: String!
+  description: String
+  canRead: Boolean!
+  canCreate: Boolean!
+  canUpdate: Boolean!
+  canDelete: Boolean!
 }
 
 input UpdateRoleInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+  name: String
+  slug: String
+  description: String
+  canRead: Boolean
+  canCreate: Boolean
+  canUpdate: Boolean
+  canDelete: Boolean
+  id: String!
 }

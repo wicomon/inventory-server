@@ -8,28 +8,28 @@ import { UpdateRoleInput } from './dto/update-role.input';
 export class RoleResolver {
   constructor(private readonly roleService: RoleService) {}
 
-  @Mutation(() => Role)
-  createRole(@Args('createRoleInput') createRoleInput: CreateRoleInput) {
-    return this.roleService.create(createRoleInput);
-  }
-
-  @Query(() => [Role], { name: 'role' })
+  @Query(() => [Role], { name: 'roleFindAll' })
   findAll() {
     return this.roleService.findAll();
   }
 
-  @Query(() => Role, { name: 'role' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  @Query(() => Role, { name: 'roleFindOne' })
+  findOne(@Args('id', { type: () => String }) id: string) {
     return this.roleService.findOne(id);
   }
 
-  @Mutation(() => Role)
+  @Mutation(() => Role, { name: 'roleCreate' })
+  createRole(@Args('createRoleInput') createRoleInput: CreateRoleInput) {
+    return this.roleService.create(createRoleInput);
+  }
+
+  @Mutation(() => Role, { name: 'roleUpdate' })
   updateRole(@Args('updateRoleInput') updateRoleInput: UpdateRoleInput) {
     return this.roleService.update(updateRoleInput.id, updateRoleInput);
   }
 
-  @Mutation(() => Role)
-  removeRole(@Args('id', { type: () => Int }) id: number) {
+  @Mutation(() => Role, { name: 'roleRemove' })
+  removeRole(@Args('id', { type: () => String }) id: string) {
     return this.roleService.remove(id);
   }
 }
