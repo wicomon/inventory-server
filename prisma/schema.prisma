@@ -35,13 +35,14 @@ model User {
   lastName  String
   isActive  Boolean  @default(true)
   companyId String
+  roleId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   createdBy String?
   updatedBy String?
 
-  company   Company    @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  userRoles UserRole[]
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  role    Role    @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
   @@index([companyId])
 }
@@ -62,26 +63,26 @@ model Role {
   updatedBy   String?
 
   // company         Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  userRoles UserRole[]
+  users User[]
   // rolePermissions RolePermission[]
 
   @@unique([name]) // Un rol único por nombre dentro de cada empresa
   @@unique([slug]) // Un rol único por nombre dentro de cada empresa
 }
 
-model UserRole {
-  id        String   @id @default(uuid())
-  userId    String
-  roleId    String
-  createdAt DateTime @default(now())
+// model UserRole {
+//   id        String   @id @default(uuid())
+//   userId    String
+//   roleId    String
+//   createdAt DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+//   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+//   role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, roleId])
-  @@index([userId])
-  @@index([roleId])
-}
+//   @@unique([userId, roleId])
+//   @@index([userId])
+//   @@index([roleId])
+// }
 
 model Menu {
   id          String   @id @default(uuid())

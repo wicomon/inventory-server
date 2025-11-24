@@ -23,6 +23,9 @@ export class User {
   @Field(() => String)
   companyId: string;
 
+  @Field(() => String)
+  roleId: string;
+
   @Field(() => Date)
   createdAt: Date;
 

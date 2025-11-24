@@ -3,19 +3,26 @@ import { UserService } from './user.service';
 import { User } from './entities/user.entity';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
+import { PrismaSelect } from 'src/common/types';
+import { SelectFields } from 'src/common/decorators/selected-fields.decorator';
 
 @Resolver(() => User)
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
   @Query(() => [User], { name: 'userFindAll' })
-  findAll() {
-    return this.userService.findAll();
+  findAll(
+    @SelectFields() select: PrismaSelect
+  ) {
+    return this.userService.findAll(select);
   }
 
   @Query(() => User, { name: 'userById' })
-  findOne(@Args('id', { type: () => String }) id: string) {
-    return this.userService.findOne(id);
+  findOne(
+    @Args('id', { type: () => String }) id: string,
+    @SelectFields() select: PrismaSelect
+  ) {
+    return this.userService.findOne(id, select);
   }
 
   @Mutation(() => Boolean, { name: 'userCreate' })

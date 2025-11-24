@@ -10,6 +10,7 @@ type User {
   lastName: String!
   isActive: Boolean!
   companyId: String!
+  roleId: String!
   createdAt: DateTime!
   updatedAt: DateTime!
   createdBy: String
@@ -88,7 +89,7 @@ input CreateUserInput {
   firstName: String!
   lastName: String!
   companyId: String!
-  roles: [String!]!
+  roleId: String!
 }
 
 input UpdateUserInput {
@@ -97,7 +98,7 @@ input UpdateUserInput {
   firstName: String
   lastName: String
   companyId: String
-  roles: [String!]
+  roleId: String
   id: String!
 }
 

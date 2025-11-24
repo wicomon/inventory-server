@@ -24,7 +24,7 @@ export class CreateUserInput {
   @IsString()
   companyId: string;
 
-  @Field(() => [String])
-  @IsString({ each: true })
-  roles: string[];
+  @Field(() => String)
+  @IsString()
+  roleId: string;
 }
