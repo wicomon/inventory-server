@@ -7,18 +7,25 @@ import {
 import { CreateCompanyInput } from './dto/create-company.input';
 import { UpdateCompanyInput } from './dto/update-company.input';
 import { PrismaService } from 'src/common/services/prisma.service';
+import { PrismaSelect } from 'src/common/types';
 
 @Injectable()
 export class CompanyService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll() {
-    return this.prisma.company.findMany();
+  async findAll(select: PrismaSelect) {
+    return this.prisma.company.findMany({
+      where: {
+        isActive: true,
+      },
+      select,
+    });
   }
 
-  async findOne(id: string) {
+  async findOne(id: string, select: PrismaSelect) {
     const user = await this.prisma.company.findUnique({
       where: { id },
+      select
     });
     if (!user) {
       throw new NotFoundException('La empresa que intenta consultar no existe');
@@ -41,7 +48,7 @@ export class CompanyService {
       const newCompany = await this.prisma.company.create({
         data: createCompanyInput,
       });
-      return newCompany;
+      return true;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -65,7 +72,7 @@ export class CompanyService {
         data: updateCompanyInput,
       });
 
-      return updatedCompany;
+      return true;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -90,7 +97,7 @@ export class CompanyService {
         },
       });
 
-      return deletedCompany;
+      return true;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

@@ -72,15 +72,15 @@ type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
   updateUser(updateUserInput: UpdateUserInput!): User!
   removeUser(id: String!): User!
-  companyCreate(createCompanyInput: CreateCompanyInput!): Company!
-  companyUpdate(updateCompanyInput: UpdateCompanyInput!): Company!
-  companyRemove(id: String!): Company!
+  companyCreate(createCompanyInput: CreateCompanyInput!): Boolean!
+  companyUpdate(updateCompanyInput: UpdateCompanyInput!): Boolean!
+  companyRemove(id: String!): Boolean!
   createMenu(createMenuInput: CreateMenuInput!): Menu!
   updateMenu(updateMenuInput: UpdateMenuInput!): Menu!
   removeMenu(id: Int!): Menu!
-  roleCreate(createRoleInput: CreateRoleInput!): Role!
-  roleUpdate(updateRoleInput: UpdateRoleInput!): Role!
-  roleRemove(id: String!): Role!
+  roleCreate(createRoleInput: CreateRoleInput!): Boolean!
+  roleUpdate(updateRoleInput: UpdateRoleInput!): Boolean!
+  roleRemove(id: String!): Boolean!
 }
 
 input CreateUserInput {

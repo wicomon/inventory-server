@@ -7,19 +7,26 @@ import {
 import { CreateRoleInput } from './dto/create-role.input';
 import { UpdateRoleInput } from './dto/update-role.input';
 import { PrismaService } from 'src/common/services/prisma.service';
+import { PrismaSelect } from 'src/common/types';
 
 @Injectable()
 export class RoleService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll() {
-    const roles = await this.prisma.role.findMany();
+  async findAll(select: PrismaSelect) {
+    const roles = await this.prisma.role.findMany({
+      where: {
+        isActive: true,
+      },
+      select,
+    });
     return roles;
   }
 
-  async findOne(id: string) {
+  async findOne(id: string, select: PrismaSelect) {
     const role = await this.prisma.role.findUnique({
       where: { id },
+      select,
     });
     if (!role) {
       throw new NotFoundException('El rol que intenta consultar no existe');
@@ -43,7 +50,7 @@ export class RoleService {
         data: createRoleInput,
       });
 
-      return newRole;
+      return true;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -64,7 +71,7 @@ export class RoleService {
         data: updateRoleInput,
       });
 
-      return updatedRole;
+      return true;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -85,7 +92,7 @@ export class RoleService {
         data: { isActive: false },
       });
 
-      return deletedRole;
+      return true;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
