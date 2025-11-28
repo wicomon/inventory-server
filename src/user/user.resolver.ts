@@ -5,7 +5,10 @@ import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { PrismaSelect } from 'src/common/types';
 import { SelectFields } from 'src/common/decorators/selected-fields.decorator';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { UseGuards } from '@nestjs/common';
 
+@UseGuards( JwtAuthGuard )
 @Resolver(() => User)
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
