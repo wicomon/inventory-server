@@ -56,15 +56,6 @@ type User {
   company: Company!
 }
 
-type Menu {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-type AuthResponse {
-  token: String!
-}
-
 type ContextCompany {
   id: String!
   name: String!
@@ -88,6 +79,15 @@ type ContextUser {
   isActive: Boolean!
   company: ContextCompany!
   role: ContextRole!
+}
+
+type Menu {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+type AuthResponse {
+  token: String!
 }
 
 type Query {

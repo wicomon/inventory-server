@@ -7,39 +7,53 @@ import { PrismaSelect } from 'src/common/types';
 import { SelectFields } from 'src/common/decorators/selected-fields.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { UseGuards } from '@nestjs/common';
+import { ContextUser } from 'src/common/entities/ContextUser';
+import { CurrentUser } from 'src/common/decorators';
+import { ValidRoles } from 'src/common/enum/valid-roles.enum';
 
-@UseGuards( JwtAuthGuard )
+@UseGuards(JwtAuthGuard)
 @Resolver(() => User)
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
   @Query(() => [User], { name: 'userFindAll' })
   findAll(
-    @SelectFields() select: PrismaSelect
+    @SelectFields() select: PrismaSelect,
+    @CurrentUser(/* [ValidRoles.admin] */) user: ContextUser,
   ) {
-    return this.userService.findAll(select);
+    return this.userService.findAll(select, user);
   }
 
   @Query(() => User, { name: 'userById' })
   findOne(
     @Args('id', { type: () => String }) id: string,
-    @SelectFields() select: PrismaSelect
+    @SelectFields() select: PrismaSelect,
+    @CurrentUser(/* [ValidRoles.admin] */) user: ContextUser,
   ) {
-    return this.userService.findOne(id, select);
+    return this.userService.findOne(id, select, user);
   }
 
   @Mutation(() => Boolean, { name: 'userCreate' })
-  createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
-    return this.userService.create(createUserInput);
+  createUser(
+    @Args('createUserInput') createUserInput: CreateUserInput,
+    @CurrentUser([ValidRoles.ROOT, ValidRoles.ADMIN]) user: ContextUser,
+  ) {
+    return this.userService.create(createUserInput, user);
   }
 
   @Mutation(() => Boolean, { name: 'userUpdate' })
-  updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
-    return this.userService.update(updateUserInput.id, updateUserInput);
+  updateUser(
+    @Args('updateUserInput') updateUserInput: UpdateUserInput,
+    @CurrentUser([ValidRoles.ROOT, ValidRoles.ADMIN]) user: ContextUser,
+  ) {
+    return this.userService.update(updateUserInput.id, updateUserInput, user);
   }
 
   @Mutation(() => Boolean, { name: 'userRemove' })
-  removeUser(@Args('id', { type: () => String }) id: string) {
-    return this.userService.remove(id);
+  removeUser(
+    @Args('id', { type: () => String }) id: string,
+    @CurrentUser([ValidRoles.ROOT, ValidRoles.ADMIN]) user: ContextUser,
+  ) {
+    return this.userService.remove(id, user);
   }
 }

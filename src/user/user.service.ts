@@ -4,6 +4,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
@@ -11,18 +12,20 @@ import { PrismaService } from 'src/common/services/prisma.service';
 import * as encrypter from 'bcryptjs';
 import { CommonService } from 'src/common/services/common.service';
 import { PrismaSelect } from 'src/common/types';
+import { ContextUser } from 'src/common/entities/ContextUser';
+import { ValidRoles } from 'src/common/enum/valid-roles.enum';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly prismaService: PrismaService,
-    private readonly commonService: CommonService
+    private readonly commonService: CommonService,
   ) {}
 
-  async findAll(select: PrismaSelect) {
+  async findAll(select: PrismaSelect, contextUser: ContextUser) {
     try {
       const users = await this.prismaService.user.findMany({
-        select
+        select,
       });
       return users;
     } catch (error) {
@@ -30,13 +33,13 @@ export class UserService {
     }
   }
 
-  async findOne(id: string, select: PrismaSelect) {
+  async findOne(id: string, select: PrismaSelect, contextUser: ContextUser) {
     try {
       const user = await this.prismaService.user.findUnique({
         where: { id },
-        select
+        select,
       });
-      if(!user){
+      if (!user) {
         throw new NotFoundException('Usuario no encontrado');
       }
       // console.log(user)
@@ -46,13 +49,13 @@ export class UserService {
     }
   }
 
-  async create(createUserInput: CreateUserInput) {
+  async create(createUserInput: CreateUserInput, contextUser: ContextUser) {
     try {
-      const { password, ...userData } = createUserInput;
+      const { password, companyId, roleId, ...userData } = createUserInput;
 
       const existsCompany = await this.prismaService.company.findFirst({
         where: {
-          id: userData.companyId,
+          id: companyId,
         },
       });
 
@@ -72,13 +75,36 @@ export class UserService {
         );
       }
 
+      const existsRole = await this.prismaService.role.findFirst({
+        where: {
+          id: roleId,
+        },
+      });
+
+      if (!existsRole) {
+        throw new BadRequestException('No existe rol');
+      }
+
+      const isContextUserRoot = contextUser.role.slug === ValidRoles.ROOT;
+      const isCurrentRoleRoot = existsRole.slug === ValidRoles.ROOT;
+
+      if (!isContextUserRoot && isCurrentRoleRoot) {
+        throw new BadRequestException(
+          'No tienes permisos para asignar el rol solicitado',
+        );
+      }
+
       const salt = encrypter.genSaltSync();
       const encryptedPassword = encrypter.hashSync(password.trim(), salt);
 
       const user = await this.prismaService.user.create({
         data: {
           ...userData,
+          companyId: isContextUserRoot ? companyId : contextUser.company.id,
+          roleId: roleId,
           password: encryptedPassword,
+          createdBy: contextUser.id,
+          updatedBy: contextUser.id,
         },
       });
       return true;
@@ -87,11 +113,92 @@ export class UserService {
     }
   }
 
-  update(id: string, updateUserInput: UpdateUserInput) {
-    return `This action updates a #${id} user`;
+  async update(
+    id: string,
+    updateUserInput: UpdateUserInput,
+    contextUser: ContextUser,
+  ) {
+    try {
+      const { password, ...restDto } = updateUserInput;
+
+      const existingUser = await this.prismaService.user.findFirst({
+        where: {
+          id: id,
+        },
+        include: {
+          role: true,
+        },
+      });
+      if (!existingUser) {
+        throw new NotFoundException(`Usuario no encontrado`);
+      }
+      const isCurrentUserRoot = contextUser.role.slug === ValidRoles.ROOT;
+      const isExistingUserRoot = existingUser.role.slug === ValidRoles.ROOT;
+
+      if (isExistingUserRoot && !isCurrentUserRoot) {
+        throw new UnauthorizedException(
+          'No tienes permisos para modificar este usuario',
+        );
+      }
+
+      if (updateUserInput.companyId) {
+        const existsCompany = await this.prismaService.company.findFirst({
+          where: {
+            id: updateUserInput.companyId,
+          },
+        });
+
+        if (!existsCompany) {
+          throw new BadRequestException('No existe empresa');
+        }
+        if (contextUser.role.slug !== ValidRoles.ROOT) {
+          delete restDto.companyId;
+        }
+      }
+
+      const updatedUser = await this.prismaService.user.update({
+        where: { id },
+        data: {
+          ...restDto,
+          updatedBy: contextUser.id,
+        },
+      });
+
+      return true;
+    } catch (error) {
+      this.commonService.handleErrors(error);
+    }
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} user`;
+  async remove(id: string, contextUser: ContextUser) {
+    try {
+      const existingUser = await this.prismaService.user.findFirst({
+        where: {
+          id: id,
+          isActive: true,
+        },
+      });
+
+      if (!existingUser) {
+        throw new NotFoundException(`Usuario con id ${id} no encontrado`);
+      }
+      const deletedUser = await this.prismaService.user.update({
+        where: { id },
+        data: {
+          isActive: false,
+          updatedAt: new Date(),
+          updatedBy: contextUser.id,
+        },
+        select: {
+          id: true,
+          // name: true,
+          // code: true,
+          isActive: true,
+        },
+      });
+      return true;
+    } catch (error) {
+      this.commonService.handleErrors(error);
+    }
   }
 }
