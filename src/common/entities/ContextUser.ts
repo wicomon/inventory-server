@@ -1,15 +1,45 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 
 @ObjectType()
-export class ContextUser {
-  @Field(() => Int)
-  idUser: number;
-
-  @Field(() => String, { nullable: true })
-  email?: string;
+class ContextCompany {
+  @Field(() => String)
+  id: string;
 
   @Field(() => String)
-  nickName: string;
+  name: string;
+}
+
+@ObjectType()
+class ContextRole {
+  @Field(() => String)
+  id: string;
+
+  @Field(() => String)
+  name: string;
+
+  @Field(() => String)
+  slug: string;
+
+  @Field(() => Boolean)
+  canCreate: boolean;
+
+  @Field(() => Boolean)
+  canRead: boolean;
+
+  @Field(() => Boolean)
+  canUpdate: boolean;
+
+  @Field(() => Boolean)
+  canDelete: boolean;
+}
+
+@ObjectType()
+export class ContextUser {
+  @Field(() => String)
+  id: string;
+
+  @Field(() => String)
+  email: string;
 
   @Field(() => String)
   firstName: string;
@@ -20,12 +50,9 @@ export class ContextUser {
   @Field(() => Boolean)
   isActive: boolean;
 
-  @Field(() => String, {nullable: true})
-  refreshToken?: string;
+  @Field(() => ContextCompany)
+  company: ContextCompany;
 
-  @Field(() => Int)
-  idCompany: number;
-
-  @Field(() => [String])
-  roles: string[];
+  @Field(() => ContextRole)
+  role: ContextRole;
 }

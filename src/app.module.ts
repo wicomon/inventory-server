@@ -15,6 +15,7 @@ import { CompanyModule } from './company/company.module';
 import { MenuModule } from './menu/menu.module';
 import { RoleModule } from './role/role.module';
 import { GraphQLError, GraphQLFormattedError } from 'graphql';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { GraphQLError, GraphQLFormattedError } from 'graphql';
     CompanyModule,
     MenuModule,
     RoleModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

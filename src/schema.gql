@@ -61,6 +61,35 @@ type Menu {
   exampleField: Int!
 }
 
+type AuthResponse {
+  token: String!
+}
+
+type ContextCompany {
+  id: String!
+  name: String!
+}
+
+type ContextRole {
+  id: String!
+  name: String!
+  slug: String!
+  canCreate: Boolean!
+  canRead: Boolean!
+  canUpdate: Boolean!
+  canDelete: Boolean!
+}
+
+type ContextUser {
+  id: String!
+  email: String!
+  firstName: String!
+  lastName: String!
+  isActive: Boolean!
+  company: ContextCompany!
+  role: ContextRole!
+}
+
 type Query {
   userFindAll: [User!]!
   userById(id: String!): User!
@@ -69,6 +98,8 @@ type Query {
   menu(id: Int!): Menu!
   roleFindAll: [Role!]!
   roleFindOne(id: String!): Role!
+  authValidateToken: String!
+  authUserInfo: ContextUser!
 }
 
 type Mutation {
@@ -84,6 +115,7 @@ type Mutation {
   roleCreate(createRoleInput: CreateRoleInput!): Boolean!
   roleUpdate(updateRoleInput: UpdateRoleInput!): Boolean!
   roleRemove(id: String!): Boolean!
+  authLogin(loginInput: LoginInput!): AuthResponse!
 }
 
 input CreateUserInput {
@@ -156,4 +188,9 @@ input UpdateRoleInput {
   canUpdate: Boolean
   canDelete: Boolean
   id: String!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
 }
