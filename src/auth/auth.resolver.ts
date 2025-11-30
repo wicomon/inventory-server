@@ -5,6 +5,7 @@ import { AuthResponse } from './dto/response/auth-response.dto';
 import { LoginInput } from './dto/inputs/login.input';
 import { CurrentToken } from 'src/common/decorators';
 import { ContextUser } from 'src/common/entities/ContextUser';
+import { ChangePasswordInput } from './dto/inputs/change-password.input';
 
 @Resolver(() => Auth)
 export class AuthResolver {
@@ -27,6 +28,14 @@ export class AuthResolver {
     @CurrentToken() token: string
   ){
     return this.authService.getUserInfo(token);
+  }
+
+  @Mutation(() => Boolean, { name: 'authChangePassword' })
+  changePassword(
+    @CurrentToken() token: string,
+    @Args('changePasswordInput') changePasswordInput: ChangePasswordInput,
+  ) {
+    return this.authService.changePassword(token, changePasswordInput);
   }
 
   // @Query(() => [Auth], { name: 'authGetUser' })

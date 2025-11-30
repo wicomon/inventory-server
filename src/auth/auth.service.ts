@@ -4,13 +4,12 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { CreateAuthInput } from './dto/create-auth.input';
-import { UpdateAuthInput } from './dto/update-auth.input';
 import { LoginInput } from './dto/inputs/login.input';
 import { PrismaService } from 'src/common/services/prisma.service';
 import { CommonService } from 'src/common/services/common.service';
 import * as encrypter from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
+import { ChangePasswordInput } from './dto/inputs/change-password.input';
 
 @Injectable()
 export class AuthService {
@@ -68,6 +67,33 @@ export class AuthService {
       const user = await this.userById(id);
 
       return user;
+    } catch (error) {
+      this.commonService.handleErrors(error);
+    }
+  }
+
+  async changePassword(token: string, changePasswordInput: ChangePasswordInput) {
+    try {
+      const { id } = this.jwtService.verify(token);
+      const userId = id;
+      const { currentPassword, newPassword } = changePasswordInput;
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+      });
+
+      if (!user) throw new NotFoundException('Usuario no encontrado');
+
+      if (!encrypter.compareSync(currentPassword, user.password))
+        throw new BadRequestException('La contraseña actual es incorrecta');
+
+      const hashedPassword = encrypter.hashSync(newPassword, 10);
+
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: { password: hashedPassword },
+      });
+
+      return true;
     } catch (error) {
       this.commonService.handleErrors(error);
     }
