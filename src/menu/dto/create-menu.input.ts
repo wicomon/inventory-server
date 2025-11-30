@@ -15,6 +15,14 @@ export class CreateMenuInput {
   @IsString()
   path: string;
 
+  @Field(() => String)
+  @IsString()
+  type: string;
+
+  @Field(() => String)
+  @IsString()
+  position: string;
+
   @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()

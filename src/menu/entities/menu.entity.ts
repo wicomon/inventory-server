@@ -11,6 +11,12 @@ export class Menu {
   @Field(() => String)
   name: string;
 
+  @Field(() => String)
+  type: string;
+
+  @Field(() => String)
+  position: string;
+
   @Field(() => String, { nullable: true })
   description?: string;
 

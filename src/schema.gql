@@ -97,6 +97,8 @@ type Menu {
   id: String!
   code: String!
   name: String!
+  type: String!
+  position: String!
   description: String
   path: String
   icon: String
@@ -114,6 +116,8 @@ type SubMenu {
   id: String!
   code: String!
   name: String!
+  type: String!
+  position: String!
   description: String
   path: String
   icon: String
@@ -206,6 +210,8 @@ input CreateMenuInput {
   code: String!
   name: String!
   path: String!
+  type: String!
+  position: String!
   description: String
   icon: String
   order: Int
@@ -216,6 +222,8 @@ input UpdateMenuInput {
   code: String
   name: String
   path: String
+  type: String
+  position: String
   description: String
   icon: String
   order: Int

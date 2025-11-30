@@ -74,6 +74,8 @@ model Menu {
   id          String   @id @default(uuid())
   code        String   @unique // Código único interno: "sales", "inventory", "reports"
   name        String // Nombre por defecto: "Ventas", "Inventario", "Reportes"
+  type        String   @default("link") // Tipo de menú: "link", "dropdown"
+  position    String   @default("top") // Posición: "sidebar", "topbar"
   description String?
   path        String   @unique // Ruta en el frontend: "/ventas", "/inventario"
   icon        String? // Nombre del ícono (ej: "shopping-cart", "package")
