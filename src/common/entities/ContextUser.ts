@@ -23,6 +23,12 @@ class ContextMenu {
   @Field(() => String)
   path: string;
 
+  @Field(() => String)
+  type: string;
+
+  @Field(() => String)
+  position: string;
+
   @Field(() => Int)
   order: number;
 

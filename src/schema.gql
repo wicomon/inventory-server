@@ -66,6 +66,8 @@ type ContextMenu {
   name: String!
   code: String!
   path: String!
+  type: String!
+  position: String!
   order: Int!
   icon: String
   description: String
