@@ -4,37 +4,55 @@ import { Role } from './entities/role.entity';
 import { CreateRoleInput } from './dto/create-role.input';
 import { UpdateRoleInput } from './dto/update-role.input';
 import { PrismaSelect } from 'src/common/types';
-import { SelectFields } from 'src/common/decorators';
+import { CurrentUser, SelectFields } from 'src/common/decorators';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { UseGuards } from '@nestjs/common';
+import { ContextUser } from 'src/common/entities/ContextUser';
+import { ValidRoles } from 'src/common/enum/valid-roles.enum';
 
+@UseGuards(JwtAuthGuard)
 @Resolver(() => Role)
 export class RoleResolver {
   constructor(private readonly roleService: RoleService) {}
 
   @Query(() => [Role], { name: 'roleFindAll' })
-  findAll(@SelectFields() select: PrismaSelect) {
-    return this.roleService.findAll(select);
+  findAll(
+    @SelectFields() select: PrismaSelect,
+    @CurrentUser([ValidRoles.ROOT]) user: ContextUser,
+  ) {
+    return this.roleService.findAll(select, user);
   }
 
   @Query(() => Role, { name: 'roleFindOne' })
   findOne(
     @Args('id', { type: () => String }) id: string,
     @SelectFields() select: PrismaSelect,
+    @CurrentUser([ValidRoles.ROOT]) user: ContextUser,
   ) {
-    return this.roleService.findOne(id, select);
+    return this.roleService.findOne(id, select, user);
   }
 
   @Mutation(() => Boolean, { name: 'roleCreate' })
-  createRole(@Args('createRoleInput') createRoleInput: CreateRoleInput) {
-    return this.roleService.create(createRoleInput);
+  createRole(
+    @Args('createRoleInput') createRoleInput: CreateRoleInput,
+    @CurrentUser([ValidRoles.ROOT]) user: ContextUser,
+  ) {
+    return this.roleService.create(createRoleInput, user);
   }
 
   @Mutation(() => Boolean, { name: 'roleUpdate' })
-  updateRole(@Args('updateRoleInput') updateRoleInput: UpdateRoleInput) {
-    return this.roleService.update(updateRoleInput.id, updateRoleInput);
+  updateRole(
+    @Args('updateRoleInput') updateRoleInput: UpdateRoleInput,
+    @CurrentUser([ValidRoles.ROOT]) user: ContextUser,
+  ) {
+    return this.roleService.update(updateRoleInput.id, updateRoleInput, user);
   }
 
   @Mutation(() => Boolean, { name: 'roleRemove' })
-  removeRole(@Args('id', { type: () => String }) id: string) {
-    return this.roleService.remove(id);
+  removeRole(
+    @Args('id', { type: () => String }) id: string,
+    @CurrentUser([ValidRoles.ROOT]) user: ContextUser,
+  ) {
+    return this.roleService.remove(id, user);
   }
 }

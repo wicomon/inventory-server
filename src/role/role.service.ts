@@ -9,6 +9,8 @@ import { UpdateRoleInput } from './dto/update-role.input';
 import { PrismaService } from 'src/common/services/prisma.service';
 import { PrismaSelect } from 'src/common/types';
 import { CommonService } from 'src/common/services/common.service';
+import { ContextUser } from 'src/common/entities/ContextUser';
+import { AssignMenuInput } from './dto/assign-menu.input';
 
 @Injectable()
 export class RoleService {
@@ -17,7 +19,7 @@ export class RoleService {
     private readonly commonService: CommonService,
   ) {}
 
-  async findAll(select: PrismaSelect) {
+  async findAll(select: PrismaSelect, contextUser: ContextUser) {
     try {
       const roles = await this.prisma.role.findMany({
         where: {
@@ -31,7 +33,7 @@ export class RoleService {
     }
   }
 
-  async findOne(id: string, select: PrismaSelect) {
+  async findOne(id: string, select: PrismaSelect, contextUser: ContextUser) {
     try {
       const role = await this.prisma.role.findUnique({
         where: { id },
@@ -46,7 +48,7 @@ export class RoleService {
     }
   }
 
-  async create(createRoleInput: CreateRoleInput) {
+  async create(createRoleInput: CreateRoleInput, contextUser: ContextUser) {
     try {
       const existsRole = await this.prisma.role.findFirst({
         where: {
@@ -68,7 +70,11 @@ export class RoleService {
     }
   }
 
-  async update(id: string, updateRoleInput: UpdateRoleInput) {
+  async update(
+    id: string,
+    updateRoleInput: UpdateRoleInput,
+    contextUser: ContextUser,
+  ) {
     try {
       const existsRole = await this.prisma.role.findUnique({
         where: { id },
@@ -89,7 +95,7 @@ export class RoleService {
     }
   }
 
-  async remove(id: string) {
+  async remove(id: string, contextUser: ContextUser) {
     try {
       const existsRole = await this.prisma.role.findUnique({
         where: { id },
@@ -105,6 +111,45 @@ export class RoleService {
       });
 
       return true;
+    } catch (error) {
+      this.commonService.handleErrors(error);
+    }
+  }
+
+  async assignMenusToRole(assignMenusDto: AssignMenuInput, contextUser: ContextUser) {
+    try {
+      const { roleId, menuIds } = assignMenusDto;
+
+      const existsRole = await this.prisma.role.findUnique({
+        where: { id: roleId },
+      });
+
+      if (!existsRole) {
+        throw new NotFoundException('El rol que intenta actualizar no existe');
+      }
+
+      const roles = await this.prisma.$transaction(async (tx) => {
+        // remove existing menu assignments for the role
+        await tx.roleMenu.deleteMany({
+          where: { roleId },
+        });
+
+        // create new menu assignments
+        const createRoleMenus = menuIds.map((menuId) => ({
+          roleId,
+          menuId,
+          createdBy: contextUser.id,
+          updatedBy: contextUser.id,
+        }));
+
+        await tx.roleMenu.createMany({
+          data: createRoleMenus,
+        });
+
+        return true;
+      })
+
+      return roles;
     } catch (error) {
       this.commonService.handleErrors(error);
     }

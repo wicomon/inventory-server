@@ -96,12 +96,11 @@ model RoleMenu {
   id          String   @id @default(uuid())
   roleId      String
   menuId      String
-  isActive    Boolean  @default(true) // Permite deshabilitar sin eliminar
-  customName  String? // Nombre personalizado para este rol
-  customIcon  String? // Ícono personalizado para este rol
-  customOrder Int? // Orden personalizado para este rol
+  isActive    Boolean  @default(true) 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  createdBy   String?
+  updatedBy   String?
 
   role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
   menu Menu @relation(fields: [menuId], references: [id], onDelete: Cascade)
