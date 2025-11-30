@@ -61,6 +61,17 @@ type ContextCompany {
   name: String!
 }
 
+type ContextMenu {
+  id: String!
+  name: String!
+  code: String!
+  path: String!
+  order: Int!
+  icon: String
+  description: String
+  subMenu: [ContextMenu!]
+}
+
 type ContextRole {
   id: String!
   name: String!
@@ -79,6 +90,7 @@ type ContextUser {
   isActive: Boolean!
   company: ContextCompany!
   role: ContextRole!
+  menus: [ContextMenu!]!
 }
 
 type Menu {

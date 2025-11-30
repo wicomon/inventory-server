@@ -10,6 +10,33 @@ class ContextCompany {
 }
 
 @ObjectType()
+class ContextMenu {
+  @Field(() => String)
+  id: string;
+
+  @Field(() => String)
+  name: string;
+
+  @Field(() => String)
+  code: string;
+
+  @Field(() => String)
+  path: string;
+
+  @Field(() => Int)
+  order: number;
+
+  @Field(() => String, { nullable: true })
+  icon?: string;
+
+  @Field(() => String, { nullable: true })
+  description?: string;
+
+  @Field(() => [ContextMenu], { nullable: true })
+  subMenu?: ContextMenu[];
+}
+
+@ObjectType()
 class ContextRole {
   @Field(() => String)
   id: string;
@@ -55,4 +82,7 @@ export class ContextUser {
 
   @Field(() => ContextRole)
   role: ContextRole;
+
+  @Field(() => [ContextMenu])
+  menus?: ContextMenu[];
 }

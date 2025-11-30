@@ -63,7 +63,7 @@ model Role {
 
   // company         Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
   users User[]
-  Menu  RoleMenu[]
+  menus  RoleMenu[]
   // rolePermissions RolePermission[]
 
   @@unique([name]) // Un rol único por nombre dentro de cada empresa

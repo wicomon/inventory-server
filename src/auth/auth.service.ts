@@ -97,6 +97,43 @@ export class AuthService {
             canRead: true,
             canUpdate: true,
             canDelete: true,
+            menus: {
+              select: {
+                menu: {
+                  select: {
+                    id: true,
+                    name: true,
+                    code: true,
+                    path: true,
+                    order: true,
+                    icon: true,
+                    description: true,
+                    subMenu: {
+                      select: {
+                        id: true,
+                        name: true,
+                        code: true,
+                        path: true,
+                        order: true,
+                        icon: true,
+                        description: true,
+                        subMenu: {
+                          select: {
+                            id: true,
+                            name: true,
+                            code: true,
+                            path: true,
+                            order: true,
+                            icon: true,
+                            description: true,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
           },
         },
       },
@@ -105,6 +142,13 @@ export class AuthService {
     if (!user) throw new NotFoundException('User not found');
     if (!user.isActive) throw new UnauthorizedException('User inactive');
 
-    return user;
+    const formatedUser = {
+      ...user,
+      menus : user.role.menus
+        .map((rm) => rm.menu)
+        .sort((a, b) => a.order - b.order),
+    }
+    // console.log(formatedUser);
+    return formatedUser;
   }
 }
