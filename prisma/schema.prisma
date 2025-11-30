@@ -23,9 +23,7 @@ model Company {
   createdBy String?
   updatedBy String?
 
-  users        User[]
-  // roles        Role[]
-  companyMenus CompanyMenu[] // Menús habilitados para esta empresa
+  users User[]
 }
 
 model User {
@@ -65,25 +63,12 @@ model Role {
 
   // company         Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
   users User[]
+  Menu  RoleMenu[]
   // rolePermissions RolePermission[]
 
   @@unique([name]) // Un rol único por nombre dentro de cada empresa
   @@unique([slug]) // Un rol único por nombre dentro de cada empresa
 }
-
-// model UserRole {
-//   id        String   @id @default(uuid())
-//   userId    String
-//   roleId    String
-//   createdAt DateTime @default(now())
-
-//   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-//   role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
-
-//   @@unique([userId, roleId])
-//   @@index([userId])
-//   @@index([roleId])
-// }
 
 model Menu {
   id          String   @id @default(uuid())
@@ -100,29 +85,28 @@ model Menu {
   createdBy   String?
   updatedBy   String?
 
-  parent       Menu?         @relation("MenuHierarchy", fields: [parentId], references: [id])
-  subMenu      Menu[]        @relation("MenuHierarchy")
-  companyMenus CompanyMenu[] // Empresas que tienen este menú habilitado
-  // rolePermissions RolePermission[]
+  parent    Menu?      @relation("MenuHierarchy", fields: [parentId], references: [id])
+  subMenu   Menu[]     @relation("MenuHierarchy")
+  roleMenus RoleMenu[]
 
   // @@index([parentId])
 }
 
-model CompanyMenu {
+model RoleMenu {
   id          String   @id @default(uuid())
-  companyId   String
+  roleId      String
   menuId      String
-  isEnabled   Boolean  @default(true) // Permite deshabilitar sin eliminar
-  customName  String? // Nombre personalizado: "Punto de Venta" en vez de "Ventas"
-  customIcon  String? // Ícono personalizado
-  customOrder Int? // Orden personalizado para esta empresa
+  isActive    Boolean  @default(true) // Permite deshabilitar sin eliminar
+  customName  String? // Nombre personalizado para este rol
+  customIcon  String? // Ícono personalizado para este rol
+  customOrder Int? // Orden personalizado para este rol
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  menu    Menu    @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  menu Menu @relation(fields: [menuId], references: [id], onDelete: Cascade)
 
-  @@unique([companyId, menuId])
-  @@index([companyId])
+  @@unique([roleId, menuId])
+  @@index([roleId])
   @@index([menuId])
 }
