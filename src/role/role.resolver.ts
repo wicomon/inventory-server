@@ -9,6 +9,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { UseGuards } from '@nestjs/common';
 import { ContextUser } from 'src/common/entities/ContextUser';
 import { ValidRoles } from 'src/common/enum/valid-roles.enum';
+import { AssignMenuInput } from './dto/assign-menu.input';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => Role)
@@ -54,5 +55,13 @@ export class RoleResolver {
     @CurrentUser([ValidRoles.ROOT]) user: ContextUser,
   ) {
     return this.roleService.remove(id, user);
+  }
+
+  @Mutation(() => Boolean, { name: 'roleAssignMenus' })
+  assignMenusToRole(
+    @Args('assignMenuInput') assignMenuInput: AssignMenuInput,
+    @CurrentUser([ValidRoles.ROOT]) user: ContextUser,
+  ) {
+    return this.roleService.assignMenusToRole(assignMenuInput, user);
   }
 }

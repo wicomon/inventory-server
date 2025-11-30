@@ -145,6 +145,7 @@ type Mutation {
   roleCreate(createRoleInput: CreateRoleInput!): Boolean!
   roleUpdate(updateRoleInput: UpdateRoleInput!): Boolean!
   roleRemove(id: String!): Boolean!
+  roleAssignMenus(assignMenuInput: AssignMenuInput!): Boolean!
   authLogin(loginInput: LoginInput!): AuthResponse!
 }
 
@@ -228,6 +229,11 @@ input UpdateRoleInput {
   canUpdate: Boolean
   canDelete: Boolean
   id: String!
+}
+
+input AssignMenuInput {
+  roleId: String!
+  menuIds: [String!]!
 }
 
 input LoginInput {

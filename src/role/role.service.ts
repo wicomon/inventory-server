@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   InternalServerErrorException,
@@ -126,6 +127,18 @@ export class RoleService {
 
       if (!existsRole) {
         throw new NotFoundException('El rol que intenta actualizar no existe');
+      }
+
+      // validar que los menus solo no tengan parentId
+      const menus = await this.prisma.menu.findMany({
+        where: {
+          id: { in: menuIds },
+          parentId: null,
+        },
+      });
+
+      if (menus.length !== menuIds.length) {
+        throw new BadRequestException('Uno o más menús son inválidos o no son menús principales');
       }
 
       const roles = await this.prisma.$transaction(async (tx) => {
