@@ -21,7 +21,6 @@ export class CommonService {
 
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       // Handle known Prisma errors
-      console.log('is instance');
       switch (error.code) {
         case 'P2000':
           throw new BadRequestException('Provided value is too long');
