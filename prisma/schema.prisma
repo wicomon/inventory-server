@@ -77,7 +77,7 @@ model Menu {
   type        String   @default("link") // Tipo de menú: "link", "dropdown"
   position    String   @default("top") // Posición: "sidebar", "topbar"
   description String?
-  path        String   @unique // Ruta en el frontend: "/ventas", "/inventario"
+  path        String   // Ruta en el frontend: "/ventas", "/inventario"
   icon        String? // Nombre del ícono (ej: "shopping-cart", "package")
   order       Int      @default(0) // Orden por defecto
   parentId    String? // Para menús anidados (submenús)
